@@ -1,5 +1,0 @@
-#implement parser
-#implement ls
-#implement cd
-#implement command history
-#implement non_interactive_shell()
