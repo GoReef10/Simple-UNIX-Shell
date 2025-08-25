@@ -93,6 +93,7 @@ void interactive_shell(){
             parser(input, args, &nr_args);
             if(nr_args == 0)
                 continue;
+            // implement cd
             if(strcmp(args[0], "cd") == 0){
                 if(args[1] == NULL)
                     chdir(getenv("HOME"));

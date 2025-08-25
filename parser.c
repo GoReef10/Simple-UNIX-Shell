@@ -4,7 +4,8 @@
 #define BUFFER_SIZE 64
 #define COMMAND_NR 100
 
-void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile){
+//void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile){
+void parser(char *input, char *args[], int *nr_args){
     //*infile = NULL;
     //*outfile = NULL
     char *tok = strtok(input, DELIMITERS);
