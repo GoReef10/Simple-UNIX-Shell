@@ -42,6 +42,8 @@ void interactive_shell(){
     gethostname(hostname, sizeof(hostname));
     getlogin_r(username, sizeof(username));
     int run = 1;
+    int redirect = 0;
+    char *infile = NULL;
 
     while(run){
 
@@ -94,6 +96,22 @@ void interactive_shell(){
             if(nr_args == 0)
                 continue;
             // implement cd
+            // probably should move this at the start of the if block or even 
+                    // outside the block
+            int i = 0;
+            for (i = 0; i < nr_args; i++) {
+                if(strcmp(args[i], "<") == 0){
+                    args[i] = NULL;
+                    if(nr_args - i < 2){
+                        printf("No input file specified\n");
+                            break;
+                    }
+                    else{
+                        infile = args[i + 1];
+                        redirect = 1;
+                    }
+                }
+            }
             if(strcmp(args[0], "cd") == 0){
                 if(args[1] == NULL)
                     chdir(getenv("HOME"));
@@ -112,8 +130,19 @@ void interactive_shell(){
                         exit(EXIT_FAILURE);
                     }
                     else if(pid == 0){
-
-                        if(execvp(args[0], args) == -1);
+                        
+                        if(redirect){
+                            int fd = open(infile, O_RDONLY);
+                            if (fd < 0) {
+                                perror("Could not open input file\n");
+                                exit(EXIT_FAILURE);
+                            }
+                            dup2(fd, STDIN_FILENO);
+                            close(fd);
+                            args[i + 1] = NULL;
+                            args[i] = NULL;
+                        }
+                        if(execvp(args[0], args) == -1)
                             exit(EXIT_FAILURE);
                     }
                 }
@@ -127,9 +156,19 @@ void interactive_shell(){
                     }
                     else if(pid == 0){
 
-                        if(execvp(args[0], args) == -1);
+                        if(redirect){
+                            int fd = open(infile, O_RDONLY);
+                            if (fd < 0) {
+                                perror("Could not open input file\n");
+                                exit(EXIT_FAILURE);
+                            }
+                            dup2(fd, STDIN_FILENO);
+                            close(fd);
+                            args[i + 1] = NULL;
+                            args[i] = NULL;
+                        }
+                        if(execvp(args[0], args) == -1)
                             exit(EXIT_FAILURE);
-
                     }
                     else {
                         wait(NULL);

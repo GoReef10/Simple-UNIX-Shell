@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-
+#include <fcntl.h>
 
 /* main.c */
 void interactive_shell();
