@@ -16,10 +16,12 @@ void non_interactive_shell();
 #define MAX_INPUT_SIZE 1024
 #define MAX_PATH_LEN 1024
 #define NAME_LEN 100
+#define COMMAND_NR 100
 
-void parser(char *input, char *args[], int *nr_args);
+void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile, int *background);
 
-
-// void exec_command();
+/* execute_commands.c */
+int execute_builtins(char *input, char **history, char *username, char *hostname, char *path, int *run);
+void execute_command(char *input, char *args[], char* infile, char* outfile, int background);
 
 #endif

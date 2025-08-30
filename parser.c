@@ -1,38 +1,54 @@
 #include "shell.h"
 
-#define DELIMITERS " \n"
+#define DELIMITERS " \n\t"
 #define BUFFER_SIZE 64
-#define COMMAND_NR 100
 
-//void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile){
-void parser(char *input, char *args[], int *nr_args){
-    //*infile = NULL;
-    //*outfile = NULL
+
+void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile, int *background){
+// void parser(char *input, char *args[], int *nr_args){
+    *infile = NULL;
+    *outfile = NULL;
+    *background = 0;
+
     char *tok = strtok(input, DELIMITERS);
     int i = 0;
     while(tok != NULL && i < COMMAND_NR){
         
-        /*if(strcmp(tok, "<") == 0){
-            tok = strtok(NULL, " ");
+        if(strcmp(tok, "<") == 0){
+            tok = strtok(NULL, DELIMITERS);
             if(tok != NULL){
                 *infile = tok;
+                args[i] = NULL;
+                args[i + 1] = NULL;
+                *nr_args = i;
             }
+            else{
+                printf("No input file specified\n");
+            }
+            return;
         }
-        */
-        /*if(strcmp(tok, ">") == 0){
-            tok = strtok(NULL, " ");
+        else if(strcmp(tok, ">") == 0){
+            tok = strtok(NULL, DELIMITERS);
             if(tok != NULL){
                 *outfile = tok;
+                args[i] = NULL;
+                args[i + 1] = NULL;
+                *nr_args = i;
             }
+            else{
+                printf("No output file specified\n");
+            }
+            return;
         }
-        */
-        /*else{
-
+        else if(strcmp(tok, "&") == 0){
+            *background = 1;
+            args[i] = NULL;
+            *nr_args = i;
+            return;
         }
-        */
+        
         args[i] = tok;
         i++;
-
         
         tok = strtok(NULL, DELIMITERS);
     }
