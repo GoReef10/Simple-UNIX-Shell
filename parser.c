@@ -5,7 +5,7 @@
 
 
 void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile, int *background){
-// void parser(char *input, char *args[], int *nr_args){
+
     *infile = NULL;
     *outfile = NULL;
     *background = 0;

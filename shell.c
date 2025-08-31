@@ -44,11 +44,9 @@ void print_prompt(char *hostname, char *username, char *path, int path_size, cha
     printf("[%s@%s %s]: ", username, hostname, path);
     fflush(stdout);
 }
-
     
 void interactive_shell(){
 
-    
     char input[MAX_INPUT_SIZE];
     char hostname[NAME_LEN];
     char username[NAME_LEN];
@@ -60,14 +58,15 @@ void interactive_shell(){
     int run = 1;
     //int redirect = 0;
     int background = 0;
+    int nr_args = 0;
     char *infile = NULL;
     char *outfile = NULL;
     char *args[COMMAND_NR];
-
+    char* input_copy = NULL;
+    
     while(run){
 
         //print_prompt(hostname, username, path, sizeof(path), temp_path);
-        //parser
         getcwd(path, sizeof(path));
         temp_path = truncate_path(path);
         if(temp_path != NULL){
@@ -85,7 +84,14 @@ void interactive_shell(){
         }
         input[strcspn(input, "\n")] = '\0';
         
-        if(execute_builtins(input, &history, username, hostname, path, &run))
+        input_copy = (char*)malloc((strlen(input) + 1) * sizeof(char));
+        strcpy(input_copy, input);
+        parser(input_copy, args, &nr_args, &infile, &outfile, &background);
+        
+        if(nr_args == 0)
+            continue;
+
+        if(execute_builtins(input, args, &history, username, hostname, path, &run))
             continue;
         //builtin commands
         // if(strcmp(input, "!!") == 0){
@@ -111,7 +117,8 @@ void interactive_shell(){
         //     free(history);
         //     exit(EXIT_SUCCESS);
         // }
-        execute_command(input, args, infile, outfile, background);
+        execute_command(args, infile, outfile, background);
+        free(input_copy);
         // else{
 
         //     int nr_args = 0;

@@ -21,7 +21,7 @@ void non_interactive_shell();
 void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile, int *background);
 
 /* execute_commands.c */
-int execute_builtins(char *input, char **history, char *username, char *hostname, char *path, int *run);
-void execute_command(char *input, char *args[], char* infile, char* outfile, int background);
+int execute_builtins(char *input, char *args[], char **history, char *username, char *hostname, char *path, int *run);
+void execute_command(char *args[], char* infile, char* outfile, int background);
 
 #endif
