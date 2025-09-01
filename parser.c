@@ -3,6 +3,13 @@
 #define DELIMITERS " \n\t"
 #define BUFFER_SIZE 64
 
+// typedef struct {
+//     char *input;
+//     char *output;
+//     int background;
+//     int append;
+//     struct Command *next;
+// } Command;
 
 void parser(char *input, char *args[], int *nr_args, char **infile, char **outfile, int *background){
 
@@ -18,40 +25,35 @@ void parser(char *input, char *args[], int *nr_args, char **infile, char **outfi
             tok = strtok(NULL, DELIMITERS);
             if(tok != NULL){
                 *infile = tok;
-                args[i] = NULL;
-                args[i + 1] = NULL;
-                *nr_args = i;
             }
             else{
                 printf("No input file specified\n");
+                return;
             }
-            return;
         }
         else if(strcmp(tok, ">") == 0){
             tok = strtok(NULL, DELIMITERS);
             if(tok != NULL){
                 *outfile = tok;
-                args[i] = NULL;
-                args[i + 1] = NULL;
-                *nr_args = i;
             }
             else{
                 printf("No output file specified\n");
+                return;
             }
-            return;
         }
         else if(strcmp(tok, "&") == 0){
             *background = 1;
-            args[i] = NULL;
-            *nr_args = i;
-            return;
         }
-        
-        args[i] = tok;
-        i++;
+        else {
+            args[i] = tok;
+            i++;
+        }
         
         tok = strtok(NULL, DELIMITERS);
     }
     args[i] = NULL;
     *nr_args = i;
 }
+// cat < file.txt > out.txt
+// ["cat", "NULL", "<", "NULL", "file.txt", "NULL", ">", "NULL", "out.txt", "NULL"]
+// ["cat", "<", "file.txt", ">", "out.txt"]

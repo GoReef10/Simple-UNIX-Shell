@@ -56,7 +56,6 @@ void interactive_shell(){
     gethostname(hostname, sizeof(hostname));
     getlogin_r(username, sizeof(username));
     int run = 1;
-    //int redirect = 0;
     int background = 0;
     int nr_args = 0;
     char *infile = NULL;
@@ -84,128 +83,19 @@ void interactive_shell(){
         }
         input[strcspn(input, "\n")] = '\0';
         
+        //parsing input
         input_copy = (char*)malloc((strlen(input) + 1) * sizeof(char));
         strcpy(input_copy, input);
         parser(input_copy, args, &nr_args, &infile, &outfile, &background);
         
+        //handle execution
         if(nr_args == 0)
             continue;
 
         if(execute_builtins(input, args, &history, username, hostname, path, &run))
             continue;
-        //builtin commands
-        // if(strcmp(input, "!!") == 0){
-        //     if(history == NULL){
-        //         printf("No command in history\n");
-        //         continue;
-        //     }
-        //     else{
-        //         strcpy(input, history);
-        //         printf("[%s@%s %s]: %s\n", username, hostname, path, input);
-        //         fflush(stdout);
-        //     }
-        // } 
-        // else{
-        //     free(history);
-        //     history = NULL;
-        //     history = malloc(sizeof(char) * (strlen(input) + 1));
-        //     strcpy(history, input);
-        // }
 
-        // if(strcmp(input, "exit") == 0){
-        //     run = 0;
-        //     free(history);
-        //     exit(EXIT_SUCCESS);
-        // }
         execute_command(args, infile, outfile, background);
         free(input_copy);
-        // else{
-
-        //     int nr_args = 0;
-        //     char *args[100];
-        //     parser(input, args, &nr_args, &infile, &outfile);
-        //     if(nr_args == 0)
-        //         continue;
-        //     // implement cd
-        //     // probably should move this at the start of the if block or even 
-        //             // outside the block
-        //     int i = 0;
-        //     for (i = 0; i < nr_args; i++) {
-        //         if(strcmp(args[i], "<") == 0){
-        //             args[i] = NULL;
-        //             if(nr_args - i < 2){
-        //                 printf("No input file specified\n");
-        //                     break;
-        //             }
-        //             else{
-        //                 infile = args[i + 1];
-        //                 redirect = 1;
-        //             }
-        //         }
-        //     }
-        //     if(strcmp(args[0], "cd") == 0){
-        //         if(args[1] == NULL)
-        //             chdir(getenv("HOME"));
-        //         else{
-        //             if(chdir(args[1]) != 0)
-        //                 perror("Could not change to directory");
-        //         }
-        //     } else{
-
-        //         if(strcmp(args[nr_args-1], "&") == 0){
-                    
-        //             args[nr_args-1] = NULL;
-        //             pid_t pid = fork();
-        //             if(pid < 0){
-        //                 perror("Fork failed");
-        //                 exit(EXIT_FAILURE);
-        //             }
-        //             else if(pid == 0){
-                        
-        //                 if(redirect){
-        //                     int fd = open(infile, O_RDONLY);
-        //                     if (fd < 0) {
-        //                         perror("Could not open input file\n");
-        //                         exit(EXIT_FAILURE);
-        //                     }
-        //                     dup2(fd, STDIN_FILENO);
-        //                     close(fd);
-        //                     args[i + 1] = NULL;
-        //                     args[i] = NULL;
-        //                 }
-        //                 if(execvp(args[0], args) == -1)
-        //                     exit(EXIT_FAILURE);
-        //             }
-        //         }
-        //         else{
-                    
-        //             pid_t pid = fork();
-        //             if(pid < 0){
-                        
-        //                 perror("Fork failed");
-        //                 exit(EXIT_FAILURE);
-        //             }
-        //             else if(pid == 0){
-
-        //                 if(redirect){
-        //                     int fd = open(infile, O_RDONLY);
-        //                     if (fd < 0) {
-        //                         perror("Could not open input file\n");
-        //                         exit(EXIT_FAILURE);
-        //                     }
-        //                     dup2(fd, STDIN_FILENO);
-        //                     close(fd);
-        //                     args[i + 1] = NULL;
-        //                     args[i] = NULL;
-        //                 }
-        //                 if(execvp(args[0], args) == -1)
-        //                     exit(EXIT_FAILURE);
-        //             }
-        //             else {
-        //                 wait(NULL);
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
