@@ -54,6 +54,3 @@ void parser(char *input, char *args[], int *nr_args, char **infile, char **outfi
     args[i] = NULL;
     *nr_args = i;
 }
-// cat < file.txt > out.txt
-// ["cat", "NULL", "<", "NULL", "file.txt", "NULL", ">", "NULL", "out.txt", "NULL"]
-// ["cat", "<", "file.txt", ">", "out.txt"]
