@@ -56,15 +56,11 @@ void interactive_shell(){
     gethostname(hostname, sizeof(hostname));
     getlogin_r(username, sizeof(username));
     int run = 1;
-    int background = 0;
-    int nr_args = 0;
-    char *infile = NULL;
-    char *outfile = NULL;
-    char *args[COMMAND_NR];
-    char* input_copy = NULL;
-    
+    char *input_copy = NULL;
     while(run){
 
+        Command *command = malloc(sizeof(Command));
+        memset(command, 0, sizeof(Command));
         //print_prompt(hostname, username, path, sizeof(path), temp_path);
         getcwd(path, sizeof(path));
         temp_path = truncate_path(path);
@@ -86,16 +82,21 @@ void interactive_shell(){
         //parsing input
         input_copy = (char*)malloc((strlen(input) + 1) * sizeof(char));
         strcpy(input_copy, input);
-        parser(input_copy, args, &nr_args, &infile, &outfile, &background);
+        parser(input_copy, command);
         
         //handle execution
-        if(nr_args == 0)
+        if(command->nr_args == 0)
             continue;
 
-        if(execute_builtins(input, args, &history, username, hostname, path, &run))
+        if(execute_builtins(input, command->args, &history, username, hostname, path, &run))
             continue;
 
-        execute_command(args, infile, outfile, background);
+        execute_command(*command);
+        while(command != NULL){
+            Command *temp = command;
+            command = command->next;
+            free(temp);
+        }
         free(input_copy);
     }
 }

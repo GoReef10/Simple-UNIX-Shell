@@ -38,10 +38,10 @@ int execute_builtins(char *input, char *args[], char **history, char *username, 
     return 0;
 }
 
-void execute_command(char *args[], char* infile, char* outfile, int background){
+void execute_command(Command command){
 
     pid_t pid = fork();
-    pid_t wpid;
+    // pid_t wpid;
     int status;
 
     if(pid < 0){
@@ -50,8 +50,8 @@ void execute_command(char *args[], char* infile, char* outfile, int background){
     }
 
     if(pid == 0){
-        if(infile != NULL){
-            int fd = open(infile, O_RDONLY);
+        if(command.infile != NULL){
+            int fd = open(command.infile, O_RDONLY);
             if (fd < 0) {
                 perror("Could not open input file\n");
                 exit(EXIT_FAILURE);
@@ -59,8 +59,8 @@ void execute_command(char *args[], char* infile, char* outfile, int background){
             dup2(fd, STDIN_FILENO);
             close(fd);
         }
-        if(outfile != NULL){
-            int fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if(command.outfile != NULL){
+            int fd = open(command.outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd < 0) {
                 perror("Could not open output file\n");
                 exit(EXIT_FAILURE);
@@ -68,14 +68,19 @@ void execute_command(char *args[], char* infile, char* outfile, int background){
             dup2(fd, STDOUT_FILENO);
             close(fd);
         }
-        if(execvp(args[0], args) == -1)
+        if(execvp(command.args[0], command.args) == -1)
             exit(EXIT_FAILURE);
     }
     else{
-        if(!background){
-            wait(NULL);
+        if(!command.background){
+            // wait(NULL);
             do{
-                wpid = waitpid(pid, &status, WUNTRACED);
+                (void)waitpid(pid, &status, WUNTRACED);
+                // wpid = waitpid(pid, &status, WUNTRACED);
+                // if(wpid == -1){
+                //     perror("waitpid failed");
+                //     exit(EXIT_FAILURE);
+                // }
             } while(!WIFEXITED(status) && !WIFSIGNALED(status));
         } 
     }
