@@ -85,3 +85,70 @@ void execute_command(Command command){
         } 
     }
 }
+
+void execute_pipeline(Command *command){
+    int prev_fd = -1;
+    int fd[2];
+    pid_t pid;
+    Command *last_command = NULL;
+    while(command != NULL){
+        if(command->next != NULL){
+            if(pipe(fd) == -1){
+                perror("Pipe failed");
+                exit(EXIT_FAILURE);
+            }
+        }
+        pid = fork();
+        if(pid < 0){
+            perror("Fork failed");
+            exit(EXIT_FAILURE);
+        }
+        if(pid == 0){
+            // Child processes
+            if(prev_fd != -1){
+                dup2(prev_fd, STDIN_FILENO);
+                close(prev_fd);
+            }
+            if(command->next != NULL){
+                dup2(fd[WRITE_END], STDOUT_FILENO);
+                close(fd[READ_END]);
+                close(fd[WRITE_END]);
+            }
+            if(command->outfile != NULL){
+                int out_fd = open(command->outfile, O_WRONLY | O_CREAT | (command->append ? O_APPEND : O_TRUNC), 0644);
+                if(out_fd < 0){
+                    perror("Could not open output file\n");
+                    exit(EXIT_FAILURE);
+                }
+                dup2(out_fd, STDOUT_FILENO);
+                close(out_fd);
+            }
+            if(command->infile != NULL){
+                int in_fd = open(command->infile, O_RDONLY);
+                if(in_fd < 0){
+                    perror("Could not open input file\n");
+                    exit(EXIT_FAILURE);
+                }
+                dup2(in_fd, STDIN_FILENO);
+                close(in_fd);
+            }
+            if(execvp(command->args[0], command->args) == -1){
+                perror("Execution failed");
+                exit(EXIT_FAILURE);
+            }
+        }
+        // parent process
+        if(prev_fd != -1){
+            close(prev_fd);
+        }
+        if(command->next != NULL){
+            close(fd[WRITE_END]);
+            prev_fd = fd[READ_END];
+        }
+        last_command = command;
+        command = command->next;
+    }
+    if(!last_command->background){
+        while(wait(NULL) > 0);
+    }
+}

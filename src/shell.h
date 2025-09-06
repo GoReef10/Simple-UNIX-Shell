@@ -27,11 +27,14 @@ typedef struct Command{
 
 int execute_builtins(char *input, char *args[], char **history, char *username, char *hostname, char *path, int *run);
 void execute_command(Command command);
+void execute_pipeline(Command *command);
 
 /* shell.c */
 #define MAX_INPUT_SIZE 1024
 #define MAX_PATH_LEN 1024
 #define NAME_LEN 100
+#define WRITE_END 1
+#define READ_END 0
 
 /* parser.c */
 #define DELIMITERS " \n\t"

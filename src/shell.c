@@ -91,7 +91,47 @@ void interactive_shell(){
         if(execute_builtins(input, command->args, &history, username, hostname, path, &run))
             continue;
 
-        execute_command(*command);
+        // execute_command(*command);
+        // int fd[2];
+        // if(command->next != NULL){
+        //     if(pipe(fd) == -1){
+        //         perror("Pipe failed");
+        //         continue;
+        //     }
+        //     pid_t pid1 = fork();
+        //     if(pid1 < 0){
+        //         perror("Fork failed");
+        //         continue;
+        //     }
+        //     if(pid1 == 0){
+                
+        //         dup2(fd[WRITE_END], STDOUT_FILENO);
+        //         close(fd[READ_END]);
+        //         close(fd[WRITE_END]);
+        //         execvp(command->args[0], command->args);
+        //     }
+        //     pid_t pid2 = fork();
+        //     if(pid2 < 0){
+        //         perror("Fork failed");
+        //         continue;
+        //     }
+        //     if(pid2 == 0){
+                
+        //         dup2(fd[READ_END], STDIN_FILENO);
+        //         close(fd[WRITE_END]);
+        //         close(fd[READ_END]);
+        //         execvp(command->next->args[0], command->next->args);
+        //     }
+        //     close(fd[READ_END]);
+        //     close(fd[WRITE_END]);
+        //     waitpid(pid1, NULL, 0);
+        //     waitpid(pid2, NULL, 0);
+        // }
+        // else 
+        //     execute_command(*command);
+
+        execute_pipeline(command);
+        
         while(command != NULL){
             Command *temp = command;
             command = command->next;
