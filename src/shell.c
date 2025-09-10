@@ -69,7 +69,7 @@ void interactive_shell(){
             strcpy(path, temp_path);
             free(temp_path);
         }
-
+        // printf("\r");
         printf("[%s@%s %s]: ", username, hostname, path);
         fflush(stdout);
         
@@ -79,6 +79,9 @@ void interactive_shell(){
         }
         input[strcspn(input, "\n")] = '\0';
         
+        // if (input[0] == '\0') 
+        //     continue;
+
         //parsing input
         input_copy = (char*)malloc((strlen(input) + 1) * sizeof(char));
         strcpy(input_copy, input);

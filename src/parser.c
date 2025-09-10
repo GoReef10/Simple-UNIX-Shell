@@ -20,6 +20,17 @@ void parser(char *input, Command *command){
                 return;
             }
         }
+        else if(strcmp(tok, ">>") == 0){
+            tok = strtok(NULL, DELIMITERS);
+            if(tok != NULL){
+                current_command->outfile = tok;
+                current_command->append = 1;
+            }
+            else{
+                printf("No output file specified\n");
+                return;
+            }
+        }
         else if(strcmp(tok, ">") == 0){
             tok = strtok(NULL, DELIMITERS);
             if(tok != NULL){
