@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "../include/shell.h"
 
 char *truncate_path(char* long_path){
 
@@ -58,6 +58,8 @@ void interactive_shell(){
     int run = 1;
     char *input_copy = NULL;
     while(run){
+
+        while(waitpid(-1, NULL, WNOHANG) > 0);
 
         Command *command = malloc(sizeof(Command));
         memset(command, 0, sizeof(Command));

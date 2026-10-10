@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "../include/shell.h"
 
 int execute_builtins(char *input, char *args[], char **history, char *username, char *hostname, char *path, int *run)
 {
@@ -91,6 +91,19 @@ void execute_pipeline(Command *command){
     int fd[2];
     pid_t pid;
     Command *last_command = NULL;
+
+    // remember all PIDs started by this pipeline, in order to wait only for them later 
+    int nr_stages = 0;
+    for(Command *c = command; c != NULL; c = c->next)
+        nr_stages++;
+
+    pid_t *pids = malloc(nr_stages * sizeof(pid_t));
+    if(pids == NULL){
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+    int started = 0;
+
     while(command != NULL){
         if(command->next != NULL){
             if(pipe(fd) == -1){
@@ -138,6 +151,7 @@ void execute_pipeline(Command *command){
             }
         }
         // parent process
+        pids[started++] = pid;
         if(prev_fd != -1){
             close(prev_fd);
         }
@@ -149,6 +163,8 @@ void execute_pipeline(Command *command){
         command = command->next;
     }
     if(!last_command->background){
-        while(wait(NULL) > 0);
+        for(int i = 0; i < started; i++)
+            waitpid(pids[i], NULL, 0);
     }
+    free(pids);
 }
