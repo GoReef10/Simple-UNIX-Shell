@@ -1,5 +1,15 @@
 # Simple-UNIX-Shell
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform: Linux](https://img.shields.io/badge/platform-Linux%20%7C%20POSIX-lightgrey.svg)](#getting-started)
+ 
+![C](https://img.shields.io/badge/C-A8B9CC?logo=c&logoColor=black)
+![POSIX](https://img.shields.io/badge/POSIX-system%20calls-blue)
+![GCC](https://img.shields.io/badge/GCC-compiler-orange?logo=gnu&logoColor=white)
+![GNU Make](https://img.shields.io/badge/GNU%20Make-build-green)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI-2088FF?logo=githubactions&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white)
+
 
 A command-line shell for Linux/UNIX written in C, built directly on POSIX process and file-descriptor system calls (`fork`, `execvp`, `pipe`, `dup2`, `wait`) with no external libraries.
 
